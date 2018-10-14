@@ -1,4 +1,4 @@
-package client
+package server
 
 import (
 	"net/http/httptest"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
+	"github.com/teran/microgpio/client"
 	"github.com/teran/microgpio/drivers/fake"
 	"github.com/teran/microgpio/server"
 )
@@ -29,7 +30,7 @@ func (s *ClientTestSuite) TestAll() {
 	srv := httptest.NewServer(server.New(driver))
 	defer srv.Close()
 
-	client := New(srv.URL)
+	client := client.New(srv.URL)
 
 	err := client.Ping()
 	s.Require().NoError(err)
