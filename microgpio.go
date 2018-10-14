@@ -7,7 +7,12 @@ import (
 	"github.com/teran/microgpio/server"
 )
 
+// Version var to be set by linker
+var Version = "dev build"
+
 func main() {
+	log.Printf("Starting microgpio=%s", Version)
+
 	drv := &fake.FakeDriver{
 		HighFunc: func(id int) error {
 			log.Printf("Set High to %d", id)
