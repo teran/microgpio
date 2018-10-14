@@ -4,6 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/teran/microgpio/client"
@@ -15,7 +16,7 @@ type ClientTestSuite struct {
 	suite.Suite
 }
 
-func (s *ClientTestSuite) TestAll() {
+func (s *ClientTestSuite) TestSuccessFlow() {
 	driver := &fake.FakeDriver{
 		LowFunc: func(id int) error {
 			return nil
@@ -27,22 +28,59 @@ func (s *ClientTestSuite) TestAll() {
 			return nil
 		},
 	}
+
 	srv := httptest.NewServer(server.New(driver))
 	defer srv.Close()
 
-	client := client.New(srv.URL)
+	c := client.New(srv.URL)
 
-	err := client.Ping()
+	err := c.Ping()
 	s.Require().NoError(err)
 
-	err = client.Output(1)
+	err = c.Output(1)
 	s.Require().NoError(err)
 
-	err = client.Low(1)
+	err = c.Low(1)
 	s.Require().NoError(err)
 
-	err = client.High(1)
+	err = c.High(1)
 	s.Require().NoError(err)
+}
+
+func (s *ClientTestSuite) Test5xxOnDriverError() {
+	sampleError := errors.New("test error")
+
+	driver := &fake.FakeDriver{
+		LowFunc: func(id int) error {
+			return sampleError
+		},
+		HighFunc: func(id int) error {
+			return sampleError
+		},
+		OutputFunc: func(id int) error {
+			return sampleError
+		},
+	}
+
+	srv := httptest.NewServer(server.New(driver))
+	defer srv.Close()
+
+	c := client.New(srv.URL)
+
+	err := c.Ping()
+	s.Require().NoError(err)
+
+	err = c.Output(1)
+	s.Require().Error(err)
+	s.Require().Equal(client.ErrUnexpectedStatusCode, errors.Cause(err))
+
+	err = c.Low(1)
+	s.Require().Error(err)
+	s.Require().Equal(client.ErrUnexpectedStatusCode, errors.Cause(err))
+
+	err = c.High(1)
+	s.Require().Error(err)
+	s.Require().Equal(client.ErrUnexpectedStatusCode, errors.Cause(err))
 }
 
 func TestClientTestSuite(t *testing.T) {

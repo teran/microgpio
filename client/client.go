@@ -4,6 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
+)
+
+var (
+	// ErrUnexpectedStatusCode returned on unexpected status received from API
+	ErrUnexpectedStatusCode = errors.New("unexpected status code received")
 )
 
 // Client type
@@ -53,7 +60,7 @@ func (c *Client) request(method, uri string) error {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code received: %d", response.StatusCode)
+		return errors.Wrapf(ErrUnexpectedStatusCode, "status_code=%d", response.StatusCode)
 	}
 	return nil
 }
