@@ -9,7 +9,6 @@ import (
 
 	"github.com/teran/microgpio/client"
 	"github.com/teran/microgpio/drivers/fake"
-	"github.com/teran/microgpio/server"
 )
 
 type ClientTestSuite struct {
@@ -29,7 +28,7 @@ func (s *ClientTestSuite) TestSuccessFlow() {
 		},
 	}
 
-	srv := httptest.NewServer(server.New(driver))
+	srv := httptest.NewServer(New(driver))
 	defer srv.Close()
 
 	c := client.New(srv.URL)
@@ -62,7 +61,7 @@ func (s *ClientTestSuite) Test5xxOnDriverError() {
 		},
 	}
 
-	srv := httptest.NewServer(server.New(driver))
+	srv := httptest.NewServer(New(driver))
 	defer srv.Close()
 
 	c := client.New(srv.URL)

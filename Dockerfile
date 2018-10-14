@@ -6,7 +6,7 @@ WORKDIR /go/src/github.com/teran/microgpio
 RUN make dependencies build-linux-amd64 build-linux-armv7
 
 
-FROM alpine
+FROM alpine:3.8
 
 ARG VCS_REF
 
