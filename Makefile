@@ -6,19 +6,9 @@ all: clean dependencies test build
 clean:
 	rm -vf bin/*
 
-build: build-macos build-linux build-windows
-
-build-macos: build-macos-amd64 build-macos-i386
+build: build-linux
 
 build-linux: build-linux-amd64 build-linux-i386 build-linux-armv7
-
-build-windows: build-windows-amd64 build-windows-i386
-
-build-macos-amd64:
-	GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-darwin-amd64 .
-
-build-macos-i386:
-	GOOS=darwin GOARCH=386 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-darwin-i386 .
 
 build-linux-amd64:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-linux-amd64 .
@@ -28,12 +18,6 @@ build-linux-i386:
 
 build-linux-armv7:
 	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-linux-armv7 .
-
-build-windows-amd64:
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-windows-amd64.exe .
-
-build-windows-i386:
-	GOOS=windows GOARCH=386 CGO_ENABLED=0 go build -ldflags "-X main.Version=${REVISION}" -o bin/microgpio-windows-i386.exe .
 
 dependencies:
 	go get -u github.com/golang/dep/cmd/dep
