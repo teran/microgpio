@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/teran/microgpio/drivers"
 )
@@ -13,6 +14,8 @@ var _ drivers.Driver = (*Pin)(nil)
 
 // Pin type
 type Pin struct {
+	sync.Mutex
+
 	id int
 }
 
@@ -27,6 +30,8 @@ func New(id int) *Pin {
 
 // Export exports pin to userspace
 func (g *Pin) Export() error {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.OpenFile("/sys/class/gpio/export", os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -39,6 +44,8 @@ func (g *Pin) Export() error {
 
 // Unexport unexports pin from userspace
 func (g *Pin) Unexport() error {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.OpenFile("/sys/class/gpio/unexport", os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -46,11 +53,14 @@ func (g *Pin) Unexport() error {
 	defer fp.Close()
 
 	_, err = fp.Write([]byte(strconv.Itoa(g.id)))
+
 	return err
 }
 
 // Input sets input mode for the pin
 func (g *Pin) Input() error {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id), os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -63,6 +73,7 @@ func (g *Pin) Input() error {
 
 // Output sets output mode for the pin
 func (g *Pin) Output() error {
+	g.Lock()
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id), os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -75,6 +86,8 @@ func (g *Pin) Output() error {
 
 // Mode returns pin mode. Normally values should be on of: in, out
 func (g *Pin) Mode() (string, error) {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id))
 	if err != nil {
 		return "", err
@@ -91,6 +104,8 @@ func (g *Pin) Mode() (string, error) {
 
 // High sets high bit for GPIO pin
 func (g *Pin) High() error {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id), os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -103,6 +118,8 @@ func (g *Pin) High() error {
 
 // Low sets low bit to GPIO pin
 func (g *Pin) Low() error {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id), os.O_WRONLY, 0770)
 	if err != nil {
 		return err
@@ -115,6 +132,8 @@ func (g *Pin) Low() error {
 
 // Value returns current value set for the pin
 func (g *Pin) Value() (int, error) {
+	g.Lock()
+	defer g.Unlock()
 	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id))
 	if err != nil {
 		return 0, err
