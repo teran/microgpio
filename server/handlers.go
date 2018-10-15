@@ -1,10 +1,13 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo"
+
+	"github.com/teran/microgpio/drivers/raspberrypi/gpio"
 )
 
 func (s *Server) index(c echo.Context) error {
@@ -13,6 +16,7 @@ func (s *Server) index(c echo.Context) error {
 		"/ping":            "GET",
 		"/gpio/:id/high":   "POST",
 		"/gpio/:id/low":    "POST",
+		"/gpio/:id/input":  "POST",
 		"/gpio/:id/output": "POST",
 	})
 }
@@ -30,10 +34,18 @@ func (s *Server) high(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
 	}
 
-	err = s.driver.High(id)
+	pin := gpio.New(id)
+	err = pin.High()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
 	return c.JSON(http.StatusOK, map[string]string{
 		"status": "ok",
 	})
@@ -46,10 +58,42 @@ func (s *Server) low(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
 	}
 
-	err = s.driver.Low(id)
+	pin := gpio.New(id)
+	err = pin.Low()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"status": "ok",
+	})
+}
+
+func (s *Server) input(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
+	}
+
+	pin := gpio.New(id)
+	err = pin.Input()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
 	return c.JSON(http.StatusOK, map[string]string{
 		"status": "ok",
 	})
@@ -62,10 +106,18 @@ func (s *Server) output(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
 	}
 
-	err = s.driver.Output(id)
+	pin := gpio.New(id)
+	err = pin.Output()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
 	return c.JSON(http.StatusOK, map[string]string{
 		"status": "ok",
 	})

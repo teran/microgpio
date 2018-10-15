@@ -2,7 +2,9 @@ package drivers
 
 // Driver type
 type Driver interface {
-	High(int) error
-	Low(int) error
-	Output(int) error
+	High() error
+	Low() error
+	Input() error
+	Output() error
+	Close() error
 }

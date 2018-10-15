@@ -8,22 +8,33 @@ var _ drivers.Driver = &FakeDriver{}
 
 // FakeDriver type
 type FakeDriver struct {
-	LowFunc    func(int) error
-	HighFunc   func(int) error
-	OutputFunc func(int) error
+	LowFunc    func() error
+	HighFunc   func() error
+	InputFunc  func() error
+	OutputFunc func() error
+	CloseFunc  func() error
+}
+
+// Input emulates setting pin to input mode
+func (f *FakeDriver) Input() error {
+	return f.InputFunc()
 }
 
 // Output emulates setting pin to output mode
-func (f *FakeDriver) Output(id int) error {
-	return f.OutputFunc(id)
+func (f *FakeDriver) Output() error {
+	return f.OutputFunc()
 }
 
 // Low emulates setting low bit to the pin specified
-func (f *FakeDriver) Low(id int) error {
-	return f.LowFunc(id)
+func (f *FakeDriver) Low() error {
+	return f.LowFunc()
 }
 
 // High emulates setting high bit to the pin specified
-func (f *FakeDriver) High(id int) error {
-	return f.HighFunc(id)
+func (f *FakeDriver) High() error {
+	return f.HighFunc()
+}
+
+func (f *FakeDriver) Close() error {
+	return f.CloseFunc()
 }

@@ -5,21 +5,17 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-
-	"github.com/teran/microgpio/drivers"
 )
 
 // Server type
 type Server struct {
-	driver drivers.Driver
-	e      *echo.Echo
+	e *echo.Echo
 }
 
 // New returns new instance of Server
-func New(driver drivers.Driver) *Server {
+func New() *Server {
 	s := &Server{
-		driver: driver,
-		e:      echo.New(),
+		e: echo.New(),
 	}
 
 	// Middleware
@@ -36,6 +32,7 @@ func (s *Server) populateRoutes() {
 	s.e.GET("/ping", s.ping)
 	s.e.POST("/gpio/:id/high", s.high)
 	s.e.POST("/gpio/:id/low", s.low)
+	s.e.POST("/gpio/:id/input", s.input)
 	s.e.POST("/gpio/:id/output", s.output)
 }
 
