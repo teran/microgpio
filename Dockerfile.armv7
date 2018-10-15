@@ -3,7 +3,7 @@ FROM golang:1.11.1 AS builder
 COPY . /go/src/github.com/teran/microgpio
 
 WORKDIR /go/src/github.com/teran/microgpio
-RUN make dependencies build-linux-amd64 build-linux-armv7
+RUN make dependencies build-linux-armv7
 
 
 FROM alpine:3.8
