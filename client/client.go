@@ -30,6 +30,16 @@ func (c *Client) Ping() error {
 	return c.request("GET", "/ping")
 }
 
+// Export method exports pin to userspace
+func (c *Client) Export(id int) error {
+	return c.request("POST", fmt.Sprintf("/gpio/%d/export", id))
+}
+
+// Unexport unexports the pin from userspace
+func (c *Client) Unexport(id int) error {
+	return c.request("POST", fmt.Sprintf("/gpio/%d/unexport", id))
+}
+
 // Low method sets low bit to the pin with ID provided
 func (c *Client) Low(id int) error {
 	return c.request("POST", fmt.Sprintf("/gpio/%d/low", id))
@@ -38,6 +48,11 @@ func (c *Client) Low(id int) error {
 // High sets high bit to the pin with ID provided
 func (c *Client) High(id int) error {
 	return c.request("POST", fmt.Sprintf("/gpio/%d/high", id))
+}
+
+// Input sets input mode for the pin with ID provided
+func (c *Client) Input(id int) error {
+	return c.request("POST", fmt.Sprintf("/gpio/%d/output", id))
 }
 
 // Output sets output mode for the pin with ID provided
