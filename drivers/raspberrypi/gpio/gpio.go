@@ -2,7 +2,9 @@ package gpio
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strconv"
 
 	"github.com/teran/microgpio/drivers"
 )
@@ -71,6 +73,22 @@ func (g *Pin) Output() error {
 	return err
 }
 
+// Mode returns pin mode. Normally values should be on of: in, out
+func (g *Pin) Mode() (string, error) {
+	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id))
+	if err != nil {
+		return "", err
+	}
+	defer fp.Close()
+
+	data, err := ioutil.ReadAll(fp)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
 // High sets high bit for GPIO pin
 func (g *Pin) High() error {
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id), os.O_WRONLY, 0770)
@@ -93,6 +111,27 @@ func (g *Pin) Low() error {
 
 	_, err = fp.Write([]byte("0"))
 	return err
+}
+
+// Value returns current value set for the pin
+func (g *Pin) Value() (int, error) {
+	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id))
+	if err != nil {
+		return 0, err
+	}
+	defer fp.Close()
+
+	data, err := ioutil.ReadAll(fp)
+	if err != nil {
+		return 0, err
+	}
+
+	value, err := strconv.Atoi(string(data))
+	if err != nil {
+		return 0, err
+	}
+
+	return value, nil
 }
 
 // Close should destroy all the resources allocated by the *Pin object

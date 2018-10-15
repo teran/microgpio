@@ -6,6 +6,8 @@ type Driver interface {
 	Unexport() error
 	Input() error
 	Output() error
+	Mode() (string, error)
+	Value() (int, error)
 	Low() error
 	High() error
 	Close() error

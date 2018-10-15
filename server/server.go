@@ -34,8 +34,10 @@ func (s *Server) populateRoutes() {
 	s.e.POST("/gpio/:id/unexport", s.unexport)
 	s.e.POST("/gpio/:id/high", s.high)
 	s.e.POST("/gpio/:id/low", s.low)
+	s.e.GET("/gpio/:id/mode", s.mode)
 	s.e.POST("/gpio/:id/input", s.input)
 	s.e.POST("/gpio/:id/output", s.output)
+	s.e.GET("/gpio/:id/value", s.value)
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

@@ -18,8 +18,10 @@ func (s *Server) index(c echo.Context) error {
 		"/gpio/:id/unexport": "POST",
 		"/gpio/:id/high":     "POST",
 		"/gpio/:id/low":      "POST",
+		"/gpio/:id/value":    "GET",
 		"/gpio/:id/input":    "POST",
 		"/gpio/:id/output":   "POST",
+		"/gpio/:id/mode":     "GET",
 	})
 }
 
@@ -122,6 +124,56 @@ func (s *Server) low(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"status": "ok",
+	})
+}
+
+func (s *Server) value(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
+	}
+
+	pin := gpio.New(id)
+	value, err := pin.Value()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+		"value":  value,
+	})
+}
+
+func (s *Server) mode(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "id must be a number")
+	}
+
+	pin := gpio.New(id)
+	mode, err := pin.Mode()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	defer func() {
+		err := pin.Close()
+		if err != nil {
+			log.Printf("error occured on closing Pin object: %s", err)
+		}
+	}()
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"status": "ok",
+		"mode":   mode,
 	})
 }
 
