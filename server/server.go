@@ -30,6 +30,8 @@ func New() *Server {
 func (s *Server) populateRoutes() {
 	s.e.GET("/", s.index)
 	s.e.GET("/ping", s.ping)
+	s.e.POST("/gpio/:id/export", s.export)
+	s.e.POST("/gpio/:id/unexport", s.unexport)
 	s.e.POST("/gpio/:id/high", s.high)
 	s.e.POST("/gpio/:id/low", s.low)
 	s.e.POST("/gpio/:id/input", s.input)

@@ -2,9 +2,11 @@ package drivers
 
 // Driver type
 type Driver interface {
-	High() error
-	Low() error
+	Export() error
+	Unexport() error
 	Input() error
 	Output() error
+	Low() error
+	High() error
 	Close() error
 }

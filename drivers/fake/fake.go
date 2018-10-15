@@ -8,11 +8,23 @@ var _ drivers.Driver = &FakeDriver{}
 
 // FakeDriver type
 type FakeDriver struct {
-	LowFunc    func() error
-	HighFunc   func() error
-	InputFunc  func() error
-	OutputFunc func() error
-	CloseFunc  func() error
+	ExportFunc   func() error
+	UnexportFunc func() error
+	LowFunc      func() error
+	HighFunc     func() error
+	InputFunc    func() error
+	OutputFunc   func() error
+	CloseFunc    func() error
+}
+
+// Export emulates exporting pin to userspace
+func (f *FakeDriver) Export() error {
+	return f.ExportFunc()
+}
+
+// Unexport emulates exporting pin to userspace
+func (f *FakeDriver) Unexport() error {
+	return f.UnexportFunc()
 }
 
 // Input emulates setting pin to input mode

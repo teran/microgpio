@@ -35,6 +35,18 @@ func (g *Pin) Export() error {
 	return err
 }
 
+// Unexport unexports pin from userspace
+func (g *Pin) Unexport() error {
+	fp, err := os.OpenFile("/sys/class/gpio/unexport", os.O_WRONLY, 0770)
+	if err != nil {
+		return err
+	}
+	defer fp.Close()
+
+	_, err = fp.Write([]byte(fmt.Sprintf("%d", g.id)))
+	return err
+}
+
 // Input sets input mode for the pin
 func (g *Pin) Input() error {
 	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id), os.O_WRONLY, 0770)
