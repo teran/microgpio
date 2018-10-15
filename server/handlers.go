@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo"
 
 	"github.com/teran/microgpio/drivers/raspberrypi/gpio"
+	"github.com/teran/microgpio/models"
 )
 
 func (s *Server) index(c echo.Context) error {
@@ -26,8 +27,8 @@ func (s *Server) index(c echo.Context) error {
 }
 
 func (s *Server) ping(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -50,8 +51,8 @@ func (s *Server) export(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -74,8 +75,8 @@ func (s *Server) unexport(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -98,8 +99,8 @@ func (s *Server) high(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -122,8 +123,8 @@ func (s *Server) low(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -146,9 +147,9 @@ func (s *Server) value(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"status": "ok",
-		"value":  value,
+	return c.JSON(http.StatusOK, &models.StatusWithValue{
+		Status: models.StatusOK,
+		Value:  value,
 	})
 }
 
@@ -171,9 +172,9 @@ func (s *Server) mode(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
-		"mode":   mode,
+	return c.JSON(http.StatusOK, &models.StatusWithMode{
+		Status: models.StatusOK,
+		Mode:   models.Mode(mode),
 	})
 }
 
@@ -196,8 +197,8 @@ func (s *Server) input(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
 
@@ -220,7 +221,7 @@ func (s *Server) output(c echo.Context) error {
 		}
 	}()
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
+	return c.JSON(http.StatusOK, &models.EmptyStatus{
+		Status: models.StatusOK,
 	})
 }
