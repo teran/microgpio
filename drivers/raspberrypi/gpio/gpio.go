@@ -33,7 +33,7 @@ func (g *Pin) Export() error {
 	}
 	defer fp.Close()
 
-	_, err = fp.Write([]byte(fmt.Sprintf("%d", g.id)))
+	_, err = fp.Write([]byte(strconv.Itoa(g.id)))
 	return err
 }
 
@@ -45,7 +45,7 @@ func (g *Pin) Unexport() error {
 	}
 	defer fp.Close()
 
-	_, err = fp.Write([]byte(fmt.Sprintf("%d", g.id)))
+	_, err = fp.Write([]byte(strconv.Itoa(g.id)))
 	return err
 }
 
