@@ -9,7 +9,7 @@ import (
 	"github.com/teran/microgpio/drivers"
 )
 
-var _ drivers.Driver = &Pin{}
+var _ drivers.Driver = (*Pin)(nil)
 
 // Pin type
 type Pin struct {
