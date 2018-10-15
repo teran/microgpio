@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -35,6 +36,11 @@ func (s *Server) high(c echo.Context) error {
 	}
 
 	pin := gpio.New(id)
+	err = pin.Export()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("error exporting pin: %s", err))
+	}
+
 	err = pin.High()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -59,6 +65,11 @@ func (s *Server) low(c echo.Context) error {
 	}
 
 	pin := gpio.New(id)
+	err = pin.Export()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("error exporting pin: %s", err))
+	}
+
 	err = pin.Low()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -83,6 +94,11 @@ func (s *Server) input(c echo.Context) error {
 	}
 
 	pin := gpio.New(id)
+	err = pin.Export()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("error exporting pin: %s", err))
+	}
+
 	err = pin.Input()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -107,6 +123,11 @@ func (s *Server) output(c echo.Context) error {
 	}
 
 	pin := gpio.New(id)
+	err = pin.Export()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("error exporting pin: %s", err))
+	}
+
 	err = pin.Output()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
