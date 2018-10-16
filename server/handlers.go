@@ -47,7 +47,7 @@ func (s *Server) export(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -71,7 +71,7 @@ func (s *Server) unexport(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -95,7 +95,7 @@ func (s *Server) high(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -119,7 +119,7 @@ func (s *Server) low(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -143,7 +143,7 @@ func (s *Server) value(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -168,7 +168,7 @@ func (s *Server) mode(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -193,7 +193,7 @@ func (s *Server) input(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
@@ -217,7 +217,7 @@ func (s *Server) output(c echo.Context) error {
 	defer func() {
 		err := pin.Close()
 		if err != nil {
-			log.Printf("error occured on closing Pin object: %s", err)
+			log.Printf("error occurred on closing Pin object: %s", err)
 		}
 	}()
 
