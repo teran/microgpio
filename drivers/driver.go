@@ -1,5 +1,9 @@
 package drivers
 
+import (
+	"github.com/teran/microgpio/models"
+)
+
 // Driver type
 type Driver interface {
 	Close() error
@@ -7,7 +11,7 @@ type Driver interface {
 	High() error
 	Input() error
 	Low() error
-	Mode() (string, error)
+	Mode() (models.Mode, error)
 	Output() error
 	Unexport() error
 	Value() (int, error)
