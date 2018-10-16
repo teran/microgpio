@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/teran/microgpio/drivers"
@@ -90,7 +91,7 @@ func (g *Pin) Mode() (models.Mode, error) {
 	if err != nil {
 		return "", err
 	}
-	return models.Mode(data), err
+	return models.Mode(strings.TrimSpace(string(data))), err
 }
 
 // High sets high bit for GPIO pin
@@ -117,7 +118,8 @@ func (g *Pin) Value() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return strconv.Atoi(string(data))
+
+	return strconv.Atoi(strings.TrimSpace(string(data)))
 }
 
 // Close should destroy all the resources allocated by the *Pin object
