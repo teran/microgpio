@@ -30,127 +30,74 @@ func New(id int) *Pin {
 
 // Export exports pin to userspace
 func (g *Pin) Export() error {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.OpenFile("/sys/class/gpio/export", os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte(strconv.Itoa(g.id)))
-	return err
+	return ioutil.WriteFile(
+		"/sys/class/gpio/export",
+		[]byte(strconv.Itoa(g.id)),
+		os.ModeExclusive,
+	)
 }
 
 // Unexport unexports pin from userspace
 func (g *Pin) Unexport() error {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.OpenFile("/sys/class/gpio/unexport", os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte(strconv.Itoa(g.id)))
-
-	return err
+	return ioutil.WriteFile(
+		"/sys/class/gpio/unexport",
+		[]byte(strconv.Itoa(g.id)),
+		os.ModeExclusive,
+	)
 }
 
 // Input sets input mode for the pin
 func (g *Pin) Input() error {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id), os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte("in"))
-	return err
+	return ioutil.WriteFile(
+		fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id),
+		[]byte("in"),
+		os.ModeExclusive,
+	)
 }
 
 // Output sets output mode for the pin
 func (g *Pin) Output() error {
-	g.Lock()
-	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id), os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte("out"))
-	return err
+	return ioutil.WriteFile(
+		fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id),
+		[]byte("out"),
+		os.ModeExclusive,
+	)
 }
 
 // Mode returns pin mode. Normally values should be on of: in, out
 func (g *Pin) Mode() (string, error) {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id))
+	data, err := ioutil.ReadFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", g.id))
 	if err != nil {
 		return "", err
 	}
-	defer fp.Close()
-
-	data, err := ioutil.ReadAll(fp)
-	if err != nil {
-		return "", err
-	}
-
-	return string(data), nil
+	return string(data), err
 }
 
 // High sets high bit for GPIO pin
 func (g *Pin) High() error {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id), os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte("1"))
-	return err
+	return ioutil.WriteFile(
+		fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id),
+		[]byte("1"),
+		os.ModeExclusive,
+	)
 }
 
 // Low sets low bit to GPIO pin
 func (g *Pin) Low() error {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id), os.O_WRONLY, 0770)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	_, err = fp.Write([]byte("0"))
-	return err
+	return ioutil.WriteFile(
+		fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id),
+		[]byte("0"),
+		os.ModeExclusive,
+	)
 }
 
 // Value returns current value set for the pin
 func (g *Pin) Value() (int, error) {
-	g.Lock()
-	defer g.Unlock()
-	fp, err := os.Open(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id))
+	data, err := ioutil.ReadFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", g.id))
 	if err != nil {
 		return 0, err
 	}
-	defer fp.Close()
-
-	data, err := ioutil.ReadAll(fp)
-	if err != nil {
-		return 0, err
-	}
-
-	value, err := strconv.Atoi(string(data))
-	if err != nil {
-		return 0, err
-	}
-
-	return value, nil
+	return strconv.Atoi(string(data))
 }
 
 // Close should destroy all the resources allocated by the *Pin object
