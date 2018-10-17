@@ -1,21 +1,5 @@
 package models
 
-// Status type
-type Status string
-
-const (
-	// StatusOK means ok status
-	StatusOK Status = "ok"
-
-	// StatusError means error status
-	StatusError Status = "error"
-)
-
-// EmptyStatus type
-type EmptyStatus struct {
-	Status Status `json:"status"`
-}
-
 // Mode type
 type Mode string
 
@@ -27,14 +11,34 @@ const (
 	ModeOut Mode = "out"
 )
 
-// StatusWithMode type
-type StatusWithMode struct {
-	Status Status `json:"status"`
-	Mode   Mode   `json:"mode"`
+// ToggleStatus type
+type ToggleStatus string
+
+const (
+	// ToggleStatusOn displays the pin is On
+	ToggleStatusOn ToggleStatus = "on"
+
+	// ToggleStatusOff displays the pin is Off
+	ToggleStatusOff ToggleStatus = "off"
+
+	// ToggleStatusUnknown display the pin status is Unknown
+	ToggleStatusUnknown ToggleStatus = "unknown"
+)
+
+// Status model
+type Status struct {
+	Status ToggleStatus `json:"status"`
 }
 
-// StatusWithValue type
-type StatusWithValue struct {
-	Status Status `json:"status"`
-	Value  int    `json:"value"`
+// PingStatus type
+type PingStatus string
+
+const (
+	// PingStatusOK returned on ok status for ping
+	PingStatusOK PingStatus = "ok"
+)
+
+// PingResponse model
+type PingResponse struct {
+	Status PingStatus `json:"status"`
 }

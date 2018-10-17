@@ -5,17 +5,21 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+
+	"github.com/teran/microgpio/controller"
 )
 
 // Server type
 type Server struct {
 	e *echo.Echo
+	c *controller.Controller
 }
 
 // New returns new instance of Server
-func New() *Server {
+func New(c *controller.Controller) *Server {
 	s := &Server{
 		e: echo.New(),
+		c: c,
 	}
 
 	// Middleware
@@ -30,14 +34,10 @@ func New() *Server {
 func (s *Server) populateRoutes() {
 	s.e.GET("/", s.index)
 	s.e.GET("/ping", s.ping)
-	s.e.POST("/gpio/:id/export", s.export)
-	s.e.POST("/gpio/:id/unexport", s.unexport)
-	s.e.POST("/gpio/:id/high", s.high)
-	s.e.POST("/gpio/:id/low", s.low)
-	s.e.GET("/gpio/:id/mode", s.mode)
-	s.e.POST("/gpio/:id/input", s.input)
-	s.e.POST("/gpio/:id/output", s.output)
-	s.e.GET("/gpio/:id/value", s.value)
+
+	s.e.POST("/pin/:name/on", s.on)
+	s.e.POST("/pin/:name/off", s.off)
+	s.e.GET("/pin/:name", s.status)
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

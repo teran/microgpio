@@ -5,6 +5,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 
+	"github.com/teran/microgpio/controller"
 	"github.com/teran/microgpio/server"
 )
 
@@ -12,7 +13,8 @@ import (
 var Version = "dev build"
 
 type config struct {
-	ListenAddr string `envconfig:"LISTEN_ADDR" default:":8080"`
+	ListenAddr string         `envconfig:"LISTEN_ADDR" default:":8080"`
+	PinMapping map[string]int `envconfig:"PIN_MAPPING" required:"true"`
 }
 
 func main() {
@@ -21,6 +23,11 @@ func main() {
 
 	log.Printf("Starting microgpio=%s", Version)
 
-	srv := server.New()
+	c, err := controller.New(cfg.PinMapping)
+	if err != nil {
+		log.Fatalf("error initializing controller: %s", err)
+	}
+
+	srv := server.New(c)
 	log.Fatalf("%s", srv.ListenAndServe(cfg.ListenAddr))
 }

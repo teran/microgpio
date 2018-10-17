@@ -1,11 +1,14 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/teran/microgpio/models"
 )
 
 var (
@@ -27,40 +30,27 @@ func New(endpoint string) *Client {
 
 // Ping method pings endpoint if it's available
 func (c *Client) Ping() error {
-	return c.request("GET", "/ping")
+	return c.request("GET", "/ping", nil)
 }
 
-// Export method exports pin to userspace
-func (c *Client) Export(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/export", id))
+// On turnes the pin on
+func (c *Client) On(name string) error {
+	return c.request("POST", fmt.Sprintf("/pin/%s/on", name), nil)
 }
 
-// Unexport unexports the pin from userspace
-func (c *Client) Unexport(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/unexport", id))
+// Off turnes the pin off
+func (c *Client) Off(name string) error {
+	return c.request("POST", fmt.Sprintf("/pin/%s/off", name), nil)
 }
 
-// Low method sets low bit to the pin with ID provided
-func (c *Client) Low(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/low", id))
+// Status returns the pin status
+func (c *Client) Status(name string) (models.ToggleStatus, error) {
+	var st models.ToggleStatus
+	err := c.request("GET", fmt.Sprintf("/pin/%s", name), &st)
+	return st, err
 }
 
-// High sets high bit to the pin with ID provided
-func (c *Client) High(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/high", id))
-}
-
-// Input sets input mode for the pin with ID provided
-func (c *Client) Input(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/output", id))
-}
-
-// Output sets output mode for the pin with ID provided
-func (c *Client) Output(id int) error {
-	return c.request("POST", fmt.Sprintf("/gpio/%d/output", id))
-}
-
-func (c *Client) request(method, uri string) error {
+func (c *Client) request(method, uri string, data interface{}) error {
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -77,5 +67,11 @@ func (c *Client) request(method, uri string) error {
 	if response.StatusCode != http.StatusOK {
 		return errors.Wrapf(ErrUnexpectedStatusCode, "status_code=%d", response.StatusCode)
 	}
+
+	if response != nil {
+		err := json.NewDecoder(response.Body).Decode(data)
+		return err
+	}
+
 	return nil
 }
