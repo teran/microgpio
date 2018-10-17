@@ -10,16 +10,11 @@ import (
 
 func (s *Server) index(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
-		"/":                  "GET",
-		"/ping":              "GET",
-		"/gpio/:id/export":   "POST",
-		"/gpio/:id/unexport": "POST",
-		"/gpio/:id/high":     "POST",
-		"/gpio/:id/low":      "POST",
-		"/gpio/:id/value":    "GET",
-		"/gpio/:id/input":    "POST",
-		"/gpio/:id/output":   "POST",
-		"/gpio/:id/mode":     "GET",
+		"/":                 "GET",
+		"/ping":             "GET",
+		"/pin/:name/on":     "POST",
+		"/pin/:name/off":    "POST",
+		"/pin/:name/status": "POST",
 	})
 }
 
