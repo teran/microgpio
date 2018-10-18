@@ -3,6 +3,7 @@ package gpio
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -56,6 +57,12 @@ func (g *Pin) Export() error {
 		[]byte(strconv.Itoa(g.id)),
 		0644,
 	)
+}
+
+// IsExported checks if the pin is already exported
+func (g *Pin) IsExported() bool {
+	_, err := os.Stat(fmt.Sprintf(g.valueFilepath, g.id))
+	return !os.IsNotExist(err)
 }
 
 // Unexport unexports pin from userspace

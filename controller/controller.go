@@ -29,9 +29,11 @@ func New(pins map[string]int) (*Controller, error) {
 
 	for k, v := range pins {
 		pin := gpio.New(v)
-		err := pin.Export()
-		if err != nil {
-			return nil, err
+		if !pin.IsExported() {
+			err := pin.Export()
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		c.pins[k] = pin

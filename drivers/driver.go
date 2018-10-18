@@ -8,6 +8,7 @@ import (
 type Driver interface {
 	Close() error
 	Export() error
+	IsExported() bool
 	High() error
 	Input() error
 	Low() error

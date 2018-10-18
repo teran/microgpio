@@ -20,10 +20,11 @@ type GPIOTestSuite struct {
 
 func (s *GPIOTestSuite) TestAll() {
 	p := NewWithPrefix(1, s.dir)
-	err := p.Export()
-	s.Require().NoError(err)
 
-	err = p.Unexport()
+	isExists := p.IsExported()
+	s.Require().False(isExists)
+
+	err := p.Export()
 	s.Require().NoError(err)
 
 	err = p.Input()
@@ -43,6 +44,9 @@ func (s *GPIOTestSuite) TestAll() {
 	err = p.High()
 	s.Require().NoError(err)
 
+	isExists = p.IsExported()
+	s.Require().True(isExists)
+
 	v, err := p.Value()
 	s.Require().NoError(err)
 	s.Require().Equal(1, v)
@@ -60,6 +64,9 @@ func (s *GPIOTestSuite) TestAll() {
 	m, err = p.Mode()
 	s.Require().NoError(err)
 	s.Require().Equal(models.ModeIn, m)
+
+	err = p.Unexport()
+	s.Require().NoError(err)
 }
 
 func (s *GPIOTestSuite) SetupSuite() {
