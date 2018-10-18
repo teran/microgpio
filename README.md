@@ -9,7 +9,7 @@ Microservice to control GPIO pins via REST
 
 # Docker
 ```
-docker run -d -p8080:8080 -v /sys:/sys teran/microgpio:armv7-latest
+docker run -e MICROGPIO_PIN_MAPPING="light:22,fan:27" -d -p8080:8080 -v /sys:/sys teran/microgpio:armv7-latest
 ```
 
 Please note microgpio is built for ARMv7 at the moment.
