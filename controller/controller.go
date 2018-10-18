@@ -23,7 +23,10 @@ type Controller struct {
 
 // New type returns new instance of *Controller
 func New(pins map[string]int) (*Controller, error) {
-	c := &Controller{}
+	c := &Controller{
+		pins: make(map[string]drivers.Driver, len(pins)),
+	}
+
 	for k, v := range pins {
 		pin := gpio.New(v)
 		err := pin.Export()
